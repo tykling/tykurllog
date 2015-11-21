@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 
 
 class IrcNetwork(models.Model):
-    network = models.TextField()
+    name = models.TextField()
     nick = models.TextField()
     altnick = models.TextField()
     realname = models.TextField(blank=True)
@@ -12,7 +12,7 @@ class IrcNetwork(models.Model):
     nickserv_password = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return '%s <%s>' % (self.network, self.nick)
+        return '%s <%s>' % (self.name, self.nick)
 
 
 class IrcServer(models.Model):
@@ -23,7 +23,7 @@ class IrcServer(models.Model):
     password = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return '%s: %s port %s, tls: %s' % (self.network, self.hostorip, self.port, self.tls)
+        return '%s: %s port %s, tls: %s' % (self.network.name, self.hostorip, self.port, self.tls)
 
 
 class IrcChannel(models.Model):
@@ -33,7 +33,7 @@ class IrcChannel(models.Model):
     log_nicknames = models.BooleanField(default=True)
 
     def __str__(self):
-        return '%s: %s' % (self.network, self.channel)
+        return '%s@%s' % (self.channel, self.network.name)
 
 
 class LoggedUrl(models.Model):
