@@ -16,14 +16,14 @@ class Command(BaseCommand):
         for ircnetwork in IrcNetwork.objects.all():
             self.stdout.write('Processing IRC network %s...' % ircnetwork)
             if ircnetwork.servers.count==0:
-                self.stdout.write('IRC network %s has no servers, skipping' % ircnetwork.network)
+                self.stdout.write('IRC network %s has no servers, skipping' % ircnetwork.name)
                 continue
             if ircnetwork.channels.count==0:
-                self.stdout.write('IRC network %s has no channels, skipping' % ircnetwork.network)
+                self.stdout.write('IRC network %s has no channels, skipping' % ircnetwork.name)
                 continue
         
             server = random.choice(ircnetwork.servers.all())
-            self.stdout.write('Picked server %s:%s (%s) for IRC network %s...' % (server.hostorip, server.port, 'with TLS' if server.tls else 'no TLS', ircnetwork.network))
+            self.stdout.write('Picked server %s:%s (%s) for IRC network %s...' % (server.hostorip, server.port, 'with TLS' if server.tls else 'no TLS', ircnetwork.name))
             config = {
                 'autojoins': [channel.channel for channel in ircnetwork.channels.all()],
                 'host': server.hostorip,
@@ -40,7 +40,7 @@ class Command(BaseCommand):
                 'network': ircnetwork,
             }
 
-            self.stdout.write('Starting bot for network %s...' % ircnetwork.network)
+            self.stdout.write('Starting bot for network %s...' % ircnetwork.name)
             irc3.IrcBot(**config).run(forever=False)
 
         ### done
