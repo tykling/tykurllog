@@ -1,6 +1,9 @@
 from django.core.management.base import BaseCommand
-from tykurllog.models import IrcNetwork
+from django.utils import timezone
+from tykurllog.models import IrcNetwork, LoggedURL
 import asyncio, irc3, random
+from urllib import parse
+
 
 class Command(BaseCommand):
     args = 'none'
@@ -33,11 +36,12 @@ class Command(BaseCommand):
                     __name__,
                 ],
                 'loop': loop,
+                'nick': ircnetwork.nick,
                 'network': ircnetwork,
             }
 
             self.stdout.write('Starting bot for network %s...' % ircnetwork.network)
-            irc3.IrcBot(nick=ircnetwork.nick, network=ircnetwork, **config).run(forever=False)
+            irc3.IrcBot(**config).run(forever=False)
 
         ### done
         self.stdout.write('Done spawning bots, entering loop...')
@@ -50,12 +54,28 @@ class Plugin(object):
         self.bot = bot
         self.network = bot.config['network']
 
-    @irc3.event(rfc.PRIVMSG)
+    @irc3.event(irc3.rfc.PRIVMSG)
     def check_for_url(bot, **kwargs):
         ### check if this is a message to a channel
         if kwargs['target'] not in [channel.channel for channel in bot.network.channels.all()]:
             return
         
-        print("got message %s on channel %s" % (kwargs['data'], kwargs['target']))
         ### check if this message contains a URL
+        for word in kwargs['data']:
+            ### since almost all strings can be a valid URL, 
+            ### we identify URLs by looking for the protocol seperator :// 
+            if '://' in word:
+                ### use urlparse to validate/cleanup the URL
+                result = parse(word)
+                url = result.geturl()
+
+                ### save to db
+                loggedurl = LoggedUrl.objects.create(
+                    channel=kwargs['target'],
+                    url=url,
+                    nick=kwargs['mask'] if bot.network.channels.get(channel=kwargs['target']).log_nicknames else None,
+                    when=timezone.now(),
+                )
+                ### debug output
+                self.bot.privmsg(kwargs['target'], 'url %s saved to db!' % url)
 
