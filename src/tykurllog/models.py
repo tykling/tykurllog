@@ -42,6 +42,6 @@ class LoggedUrl(models.Model):
     when = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return '%s spammed by %s on %s' % (self.url, self.nick, self.when)
+        return '%s spammed on %s by %s on %s' % (self.url, self.channel, self.nick, self.when)
 
 
