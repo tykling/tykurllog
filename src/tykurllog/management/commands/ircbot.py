@@ -1,8 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from tykurllog.models import IrcNetwork, LoggedUrl
-import asyncio, irc3, random
-from urllib import parse
+import asyncio, irc3, random, yurl
 
 
 class Command(BaseCommand):
@@ -66,13 +65,16 @@ class Plugin(object):
             ### we identify URLs by looking for the protocol seperator :// 
             if '://' in word:
                 ### use urlparse to validate/cleanup the URL
-                result = parse.urlparse(word)
-                url = result.geturl()
+                try:
+                    url = yurl.URL(word).validate()
+                except yurl.InvalidHost:
+                    ### invalid url
+                    return
 
                 ### save to db
                 loggedurl = LoggedUrl.objects.create(
                     channel=bot.network.channels.get(channel=kwargs['target']),
-                    url=url,
+                    url=url.as_string(),
                     nick=kwargs['mask'] if bot.network.channels.get(channel=kwargs['target']).log_nicknames else None,
                     when=timezone.now(),
                 )
