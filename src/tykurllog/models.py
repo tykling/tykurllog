@@ -10,8 +10,8 @@ class IrcNetwork(models.Model):
     nickserv_user = models.TextField(null=True, blank=True)
     nickserv_password = models.TextField(null=True, blank=True)
 
-    def __unicode__(self):
-        return unicode(self.network)
+    def __str__(self):
+        return '%s <%s>' % (self.network, self.nick)
 
 
 class IrcServer(models.Model):
@@ -21,12 +21,18 @@ class IrcServer(models.Model):
     tls = models.BooleanField(default=True)
     password = models.TextField(null=True, blank=True)
 
+    def __str__(self):
+        return '%s: %s port %s, tls: %s' % (self.network, self.hostorip, self.port, self.tls)
+
 
 class IrcChannel(models.Model):
     network = models.ForeignKey('tykurllog.IrcNetwork', related_name="channels")
     channel = models.TextField()
     key = models.TextField(null=True, blank=True)
     log_nicknames = models.BooleanField(default=True)
+
+    def __str__(self):
+        return '%s: %s' % (self.network, self.channel)
 
 
 class LoggedUrl(models.Model):
