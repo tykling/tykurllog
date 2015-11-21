@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from tykurllog.models import IrcNetwork, LoggedURL
+from tykurllog.models import IrcNetwork, LoggedUrl
 import asyncio, irc3, random
 from urllib import parse
 
@@ -61,21 +61,19 @@ class Plugin(object):
             return
         
         ### check if this message contains a URL
-        for word in kwargs['data']:
+        for word in kwargs['data'].split(" "):
             ### since almost all strings can be a valid URL, 
             ### we identify URLs by looking for the protocol seperator :// 
             if '://' in word:
                 ### use urlparse to validate/cleanup the URL
-                result = parse(word)
+                result = parse.urlparse(word)
                 url = result.geturl()
 
                 ### save to db
                 loggedurl = LoggedUrl.objects.create(
-                    channel=kwargs['target'],
+                    channel=bot.network.channels.get(channel=kwargs['target']),
                     url=url,
                     nick=kwargs['mask'] if bot.network.channels.get(channel=kwargs['target']).log_nicknames else None,
                     when=timezone.now(),
                 )
-                ### debug output
-                self.bot.privmsg(kwargs['target'], 'url %s saved to db!' % url)
 
