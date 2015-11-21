@@ -36,6 +36,7 @@ class Command(BaseCommand):
                 ],
                 'loop': loop,
                 'nick': ircnetwork.nick,
+                'realname': ircnetwork.realname if ircnetwork.realname else 'tykurllog bot - https://github.com/tykling/tykurllog',
                 'network': ircnetwork,
             }
 
@@ -59,23 +60,26 @@ class Plugin(object):
         if kwargs['target'] not in [channel.channel for channel in bot.network.channels.all()]:
             return
         
-        ### check if this message contains a URL
+        ### get the current time
+        messagetime = timezone.now()
+
+        ### check if each word in this message is a URL
         for word in kwargs['data'].split(" "):
             ### since almost all strings can be a valid URL, 
-            ### we identify URLs by looking for the protocol seperator :// 
+            ### we identify the URLs we want by looking for the protocol seperator :// 
             if '://' in word:
                 ### use urlparse to validate/cleanup the URL
                 try:
                     url = yurl.URL(word).validate()
-                except yurl.InvalidHost:
-                    ### invalid url
+                except yurl.InvalidHost: ### do we need to catch other exceptions here?
+                    ### invalid url, not saving
                     return
-
+                
                 ### save to db
                 loggedurl = LoggedUrl.objects.create(
                     channel=bot.network.channels.get(channel=kwargs['target']),
                     url=url.as_string(),
                     nick=kwargs['mask'] if bot.network.channels.get(channel=kwargs['target']).log_nicknames else None,
-                    when=timezone.now(),
+                    when=messagetime,
                 )
 

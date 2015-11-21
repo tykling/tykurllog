@@ -7,6 +7,7 @@ class IrcNetwork(models.Model):
     network = models.TextField()
     nick = models.TextField()
     altnick = models.TextField()
+    realname = models.TextField(blank=True)
     nickserv_user = models.TextField(null=True, blank=True)
     nickserv_password = models.TextField(null=True, blank=True)
 
