@@ -37,7 +37,7 @@ class Command(BaseCommand):
                 'loop': loop,
                 'nick': ircnetwork.nick,
                 'realname': ircnetwork.ident if ircnetwork.ident else 'tykurllog',
-                'userinfo': ircnetwork.realname if ircnetwork.realname else 'tykurllog bot - https://github.com/tykling/tykurllog',
+                'userinfo': ircnetwork.realname if ircnetwork.realname else 'tykurllog - https://github.com/tykling/tykurllog',
                 'network': ircnetwork,
             }
 
