@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 class IrcNetwork(models.Model):
     name = models.TextField()
     nick = models.TextField()
-    altnick = models.TextField()
+    ident = models.TextField(blank=True)
     realname = models.TextField(blank=True)
     nickserv_user = models.TextField(null=True, blank=True)
     nickserv_password = models.TextField(null=True, blank=True)
