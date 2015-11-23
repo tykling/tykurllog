@@ -10,6 +10,7 @@ class IrcNetwork(models.Model):
     realname = models.TextField(blank=True)
     nickserv_user = models.TextField(null=True, blank=True)
     nickserv_password = models.TextField(null=True, blank=True)
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return '%s <%s>' % (self.name, self.nick)
@@ -21,6 +22,7 @@ class IrcServer(models.Model):
     port = models.PositiveIntegerField()
     tls = models.BooleanField(default=True)
     password = models.TextField(null=True, blank=True)
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return '%s: %s port %s, tls: %s' % (self.network.name, self.hostorip, self.port, self.tls)
@@ -31,6 +33,7 @@ class IrcChannel(models.Model):
     channel = models.TextField()
     key = models.TextField(null=True, blank=True)
     log_nicknames = models.BooleanField(default=True)
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return '%s@%s' % (self.channel, self.network.name)
@@ -39,10 +42,9 @@ class IrcChannel(models.Model):
 class LoggedUrl(models.Model):
     channel = models.ForeignKey('tykurllog.IrcChannel', related_name="urls")
     url = models.TextField()
-    nick = models.TextField(null=True, blank=True)
+    usermask = models.TextField(null=True, blank=True)
     when = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return '%s spammed on %s by %s on %s' % (self.url, self.channel, self.nick, self.when)
-
+        return '%s spammed on %s by %s on %s' % (self.url, self.channel, self.usermask, self.when)
 

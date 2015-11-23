@@ -13,19 +13,19 @@ class Command(BaseCommand):
         loop = asyncio.get_event_loop()
 
         ### loop through networks, spawn bots as needed
-        for ircnetwork in IrcNetwork.objects.all():
+        for ircnetwork in IrcNetwork.objects.filter(active=True):
             self.stdout.write('Processing IRC network %s...' % ircnetwork)
-            if ircnetwork.servers.count==0:
-                self.stdout.write('IRC network %s has no servers, skipping' % ircnetwork.name)
+            if ircnetwork.servers.filter(active=True).count==0:
+                self.stdout.write('IRC network %s has no active servers, skipping' % ircnetwork.name)
                 continue
-            if ircnetwork.channels.count==0:
-                self.stdout.write('IRC network %s has no channels, skipping' % ircnetwork.name)
+            if ircnetwork.channels.filter(active=True).count==0:
+                self.stdout.write('IRC network %s has no active channels, skipping' % ircnetwork.name)
                 continue
         
-            server = random.choice(ircnetwork.servers.all())
+            server = random.choice(ircnetwork.servers.filter(active=True))
             self.stdout.write('Picked server %s:%s (%s) for IRC network %s...' % (server.hostorip, server.port, 'with TLS' if server.tls else 'no TLS', ircnetwork.name))
             config = {
-                'autojoins': [channel.channel for channel in ircnetwork.channels.all()],
+                'autojoins': [channel.channel for channel in ircnetwork.channels.filter(active=True)],
                 'host': server.hostorip,
                 'port': server.port,
                 'ssl': server.tls,
@@ -58,7 +58,7 @@ class Plugin(object):
     @irc3.event(irc3.rfc.PRIVMSG)
     def check_for_url(bot, **kwargs):
         ### check if this is a message to a channel
-        if kwargs['target'] not in [channel.channel for channel in bot.network.channels.all()]:
+        if kwargs['target'] not in [channel.channel for channel in bot.network.channels.filter(active=True)]:
             return
         
         ### get the current time
