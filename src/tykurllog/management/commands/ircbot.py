@@ -55,9 +55,9 @@ class Plugin(object):
         self.network = bot.config['network']
 
     @irc3.event(irc3.rfc.PRIVMSG)
-    def check_for_url(bot, **kwargs):
+    def check_for_url(self, **kwargs):
         ### check if this is a message to a channel
-        if kwargs['target'] not in [channel.channel for channel in bot.network.channels.filter(active=True)]:
+        if kwargs['target'] not in [channel.channel for channel in self.network.channels.filter(active=True)]:
             return
         
         ### get the current time
@@ -78,7 +78,7 @@ class Plugin(object):
                 ### check if this url has been spammed on this channel before
                 try:
                     dburl = LoggedUrl.objects.get(
-                        channel=bot.network.channels.get(channel=kwargs['target']),
+                        channel=self.network.channels.get(channel=kwargs['target']),
                         url=url.as_string(),
                     )
                     
@@ -87,17 +87,17 @@ class Plugin(object):
                     dburl.save()
                     
                     ### announce url repeat to channel if enabled
-                    if bot.network.channels.get(channel=kwargs['target']).announce_urlrepeats:
+                    if self.network.channels.get(channel=kwargs['target']).announce_urlrepeats:
                         if dburl.repeats==1:
-                            bot.privmsg(kwargs['target'], '%s, that url was first spammed in %s on %s by %s.' % (kwargs['usermask'].split("!")[0], kwargs['target'], dburl.when, dburl.usermask.split("!")[0]))
+                            self.bot.privmsg(kwargs['target'], '%s, that url was first spammed in %s on %s by %s.' % (kwargs['usermask'].split("!")[0], kwargs['target'], dburl.when, dburl.usermask.split("!")[0]))
                         else:
-                            bot.privmsg(kwargs['target'], '%s, that url has been repeated %s times since it was first spammed in %s on %s by %s' % (kwargs['usermask'].split("!")[0], dburl.repeats, kwargs['target'], dburl.when, dburl.usermask.split("!")[0]))
+                            self.bot.privmsg(kwargs['target'], '%s, that url has been repeated %s times since it was first spammed in %s on %s by %s' % (kwargs['usermask'].split("!")[0], dburl.repeats, kwargs['target'], dburl.when, dburl.usermask.split("!")[0]))
                 except LoggedUrl.DoesNotExist:
                     ### save new url (for this channel at least) to db
                     loggedurl = LoggedUrl.objects.create(
-                        channel=bot.network.channels.get(channel=kwargs['target']),
+                        channel=self.network.channels.get(channel=kwargs['target']),
                         url=url.as_string(),
-                        usermask=kwargs['mask'] if bot.network.channels.get(channel=kwargs['target']).log_nicknames else None,
+                        usermask=kwargs['mask'] if self.network.channels.get(channel=kwargs['target']).log_nicknames else None,
                         when=messagetime,
                     )
 
