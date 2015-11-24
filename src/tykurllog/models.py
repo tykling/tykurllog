@@ -36,7 +36,7 @@ class IrcChannel(models.Model):
     key = models.TextField(null=True, blank=True)
     log_nicknames = models.BooleanField(default=True)
     announce_urlrepeats = models.BooleanField(default=True)
-    timezone = TimeZoneField(blank=True, null=True)
+    timezone = TimeZoneField()
     active = models.BooleanField(default=True)
 
     def __str__(self):
