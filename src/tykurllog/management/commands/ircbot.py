@@ -96,7 +96,7 @@ class Plugin(object):
                             self.bot.privmsg(kwargs['target'], '%s, that url was first spammed in %s on %s by %s.' % (
                                 kwargs['mask'].split("!")[0],
                                 kwargs['target'],
-                                timezone.localtime(dburl.when).strftime("%Y-%m-%d %H:%M:%S"),
+                                timezone.localtime(dburl.when).strftime("%Y-%m-%d %H:%M:%S%z"),
                                 dburl.usermask.split("!")[0]
                             ))
                         else:
@@ -105,7 +105,7 @@ class Plugin(object):
                                 kwargs['mask'].split("!")[0],
                                 dburl.repeats,
                                 kwargs['target'],
-                                timezone.localtime(dburl.when).strftime("%Y-%m-%d %H:%M:%S"),
+                                timezone.localtime(dburl.when).strftime("%Y-%m-%d %H:%M:%S%z"),
                                 dburl.usermask.split("!")[0]
                             ))
                 except LoggedUrl.DoesNotExist:
