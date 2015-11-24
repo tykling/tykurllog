@@ -1,6 +1,8 @@
 from django.db import models
 from django import forms
 from django.core.urlresolvers import reverse
+from timezone_field import TimeZoneField
+from django.conf import settings
 
 
 class IrcNetwork(models.Model):
@@ -34,6 +36,7 @@ class IrcChannel(models.Model):
     key = models.TextField(null=True, blank=True)
     log_nicknames = models.BooleanField(default=True)
     announce_urlrepeats = models.BooleanField(default=True)
+    timezone = TimeZoneField(default=settings.DEFAULT_CHANNEL_TIMEZONE)
     active = models.BooleanField(default=True)
 
     def __str__(self):

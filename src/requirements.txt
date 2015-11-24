@@ -6,3 +6,4 @@ Whoosh==2.7.0
 irc3==0.8.3
 asyncio==3.4.3
 yurl-0.13
+django-timezone-field==1.3

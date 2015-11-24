@@ -19,3 +19,6 @@ DATABASES = {
 
 # admin site prefix
 ADMIN_PREFIX='admin'
+
+# set the default timezone for IRC channels
+DEFAULT_CHANNEL_TIMEZONE='UTC'

@@ -11,6 +11,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'haystack',
     'bootstrap3',
+    'timezone_field',
     'tykurllog',
 )
 
