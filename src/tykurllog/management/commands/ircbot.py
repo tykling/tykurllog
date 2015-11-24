@@ -76,11 +76,29 @@ class Plugin(object):
                     ### invalid url, not saving
                     return
                 
-                ### save to db
-                loggedurl = LoggedUrl.objects.create(
-                    channel=bot.network.channels.get(channel=kwargs['target']),
-                    url=url.as_string(),
-                    nick=kwargs['mask'] if bot.network.channels.get(channel=kwargs['target']).log_nicknames else None,
-                    when=messagetime,
-                )
+                ### check if this url has been spammed on this channel before
+                try:
+                    dburl = LoggedUrl.objects.get(
+                        channel=kwargs['target'],
+                        url=url.as_string(),
+                    )
+                    
+                    ### this url has been spammed to this channel before, increase number of repeats
+                    dburl.repeats += 1
+                    dburl.save()
+                    
+                    ### announce url repeat to channel if enabled
+                    if bot.network.channels.get(channel=kwargs['target']).announce_urlrepeats:
+                        if dburl.repeats==1:
+                            bot.privmsg(kwargs['target'], '%s, that url was first spammed in %s on %s by %s.' % (kwargs['mask'].split("!")[0], kwargs['target'], dburl.when, dburl.usermask.split("!")[0]))
+                        else:
+                            bot.privmsg(kwargs['target'], '%s, that url has been repeated %s times since it was first spammed in %s on %s by %s' % (kwargs['mask'].split("!")[0], dburl.repeats, kwargs['target'], dburl.when, dburl.usermask.split("!")[0]))
+                except LoggedUrl.DoesNotExist:
+                    ### save new url (for this channel at least) to db
+                    loggedurl = LoggedUrl.objects.create(
+                        channel=bot.network.channels.get(channel=kwargs['target']),
+                        url=url.as_string(),
+                        nick=kwargs['mask'] if bot.network.channels.get(channel=kwargs['target']).log_nicknames else None,
+                        when=messagetime,
+                    )
 

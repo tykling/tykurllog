@@ -33,10 +33,11 @@ class IrcChannel(models.Model):
     channel = models.TextField()
     key = models.TextField(null=True, blank=True)
     log_nicknames = models.BooleanField(default=True)
+    announce_urlrepeats = models.BooleanField(default=True)
     active = models.BooleanField(default=True)
 
     def __str__(self):
-        return '%s@%s' % (self.channel, self.network.name)
+        return '%s - %s (%s)' % (self.network.name, self.channel, 'active' if self.active else 'not active')
 
 
 class LoggedUrl(models.Model):
@@ -44,6 +45,7 @@ class LoggedUrl(models.Model):
     url = models.TextField()
     usermask = models.TextField(null=True, blank=True)
     when = models.DateTimeField(auto_now_add=True)
+    repeats = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return '%s spammed on %s by %s on %s' % (self.url, self.channel, self.usermask, self.when)
