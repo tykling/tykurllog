@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='ircchannel',
             name='timezone',
-            field=timezone_field.fields.TimeZoneField(default=b'UTC'),
+            field=timezone_field.fields.TimeZoneField(blank=True, null=True),
         ),
     ]
