@@ -29,7 +29,6 @@ class Command(BaseCommand):
                 'host': server.hostorip,
                 'port': server.port,
                 'ssl': server.tls,
-                'timeout': 10,
                 'includes': [
                     'irc3.plugins.core',
                     __name__,
@@ -79,7 +78,7 @@ class Plugin(object):
                 ### check if this url has been spammed on this channel before
                 try:
                     dburl = LoggedUrl.objects.get(
-                        channel=kwargs['target'],
+                        channel=bot.network.channels.get(channel=kwargs['target']),
                         url=url.as_string(),
                     )
                     
