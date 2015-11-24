@@ -89,15 +89,15 @@ class Plugin(object):
                     ### announce url repeat to channel if enabled
                     if bot.network.channels.get(channel=kwargs['target']).announce_urlrepeats:
                         if dburl.repeats==1:
-                            bot.privmsg(kwargs['target'], '%s, that url was first spammed in %s on %s by %s.' % (kwargs['mask'].split("!")[0], kwargs['target'], dburl.when, dburl.usermask.split("!")[0]))
+                            bot.privmsg(kwargs['target'], '%s, that url was first spammed in %s on %s by %s.' % (kwargs['usermask'].split("!")[0], kwargs['target'], dburl.when, dburl.usermask.split("!")[0]))
                         else:
-                            bot.privmsg(kwargs['target'], '%s, that url has been repeated %s times since it was first spammed in %s on %s by %s' % (kwargs['mask'].split("!")[0], dburl.repeats, kwargs['target'], dburl.when, dburl.usermask.split("!")[0]))
+                            bot.privmsg(kwargs['target'], '%s, that url has been repeated %s times since it was first spammed in %s on %s by %s' % (kwargs['usermask'].split("!")[0], dburl.repeats, kwargs['target'], dburl.when, dburl.usermask.split("!")[0]))
                 except LoggedUrl.DoesNotExist:
                     ### save new url (for this channel at least) to db
                     loggedurl = LoggedUrl.objects.create(
                         channel=bot.network.channels.get(channel=kwargs['target']),
                         url=url.as_string(),
-                        nick=kwargs['mask'] if bot.network.channels.get(channel=kwargs['target']).log_nicknames else None,
+                        usermask=kwargs['mask'] if bot.network.channels.get(channel=kwargs['target']).log_nicknames else None,
                         when=messagetime,
                     )
 
