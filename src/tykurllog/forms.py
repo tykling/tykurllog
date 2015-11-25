@@ -1,6 +1,6 @@
 from django import forms
 from haystack.forms import SearchForm
-from .models import IrcChannel
+from .models import IrcChannel, LoggedUrl
 import datetime
 
 class UrlSearchForm(SearchForm):
@@ -13,21 +13,23 @@ class UrlSearchForm(SearchForm):
         super(UrlSearchForm, self).__init__(*args, **kwargs)
         self.fields['q'].help_text = 'Show only URLs containing this text'
 
+    def no_query_found(self):
+        #return self.searchqueryset.all()
+        return LoggedUrl.objects.all()
+
     def search(self):
         # First, store the SearchQuerySet received from other processing.
         sqs = super(UrlSearchForm, self).search()
         
-        # Check if form is valid
-        if not self.is_valid():
-            return self.no_query_found()
-
         # Filter usermask if relevant
         if self.cleaned_data['usermask']:
+            print("filtering %s results by usermask %s" % (sqs.count(), self.cleaned_data['usermask']))
             sqs = sqs.filter(mask__contains=self.cleaned_data['usermask'])
         
 
         # Filter start_date if requested
         if self.cleaned_data['start_date']:
+            print("filtering %s results by start_date %s" % (sqs.count(), self.cleaned_data['start_date']))
             sqs = sqs.filter(when__gte=self.cleaned_data['start_date'])
         
         # Filter end_date if requested
@@ -36,10 +38,12 @@ class UrlSearchForm(SearchForm):
             # because datefields are compared as 0am on the given date, 
             # which is what we want for start_date but not for end_date)
             end_time = datetime.datetime.combine(self.cleaned_data['end_date'], datetime.time.max)
+            print("filtering %s results by end_date %s" % (sqs.count(), self.cleaned_data['end_date']))
             sqs = sqs.filter(when__lte=end_time)
 
         # Filter channel if relevant
         if self.cleaned_data['channel']:
+            print("filtering %s results by channel %s" % (sqs.count(), self.cleaned_data['channel']))
             sqs = sqs.filter(channel=self.cleaned_data['channel'])
 
         return sqs

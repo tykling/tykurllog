@@ -53,3 +53,7 @@ class LoggedUrl(models.Model):
     def __str__(self):
         return '%s spammed on %s by %s on %s' % (self.url, self.channel, self.usermask, self.when)
 
+    class Meta:
+        ordering = '-when'
+
+
