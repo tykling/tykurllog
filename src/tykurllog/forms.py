@@ -24,7 +24,7 @@ class UrlSearchForm(SearchForm):
         # Filter usermask if relevant
         if self.cleaned_data['usermask']:
             print("filtering %s results by usermask %s" % (sqs.count(), self.cleaned_data['usermask']))
-            sqs = sqs.filter(mask__contains=self.cleaned_data['usermask'])
+            sqs = sqs.filter(usermask__icontains=self.cleaned_data['usermask'])
         
 
         # Filter start_date if requested
