@@ -13,15 +13,21 @@ class UrlSearchForm(SearchForm):
         super(UrlSearchForm, self).__init__(*args, **kwargs)
         self.fields['q'].help_text = 'Show only URLs containing this text'
 
-    def no_query_found(self):
-        #return self.searchqueryset.all()
-        return LoggedUrl.objects.all()
-
     def search(self):
         # First, store the SearchQuerySet received from other processing.
         sqs = super(UrlSearchForm, self).search()
-        
-        # Filter usermask if relevant
+
+        # Workaround to return all results when there is no searchword (instead of returning 0 results)
+        if not self.cleaned_data.get('q'):
+            # .all() doesn't work?! so .exclude() something very unlikely to actually filter away any results... stupid
+            sqs = SearchQuerySet().exclude(when=timezone.now())
+
+        # Filter channel if requested
+        if self.cleaned_data['channel']:
+            print("filtering %s results by channel %s" % (sqs.count(), self.cleaned_data['channel']))
+            sqs = sqs.filter(channel=self.cleaned_data['channel'])
+
+        # Filter usermask if requested
         if self.cleaned_data['usermask']:
             print("filtering %s results by usermask %s" % (sqs.count(), self.cleaned_data['usermask']))
             sqs = sqs.filter(usermask__icontains=self.cleaned_data['usermask'])
@@ -31,7 +37,7 @@ class UrlSearchForm(SearchForm):
         if self.cleaned_data['start_date']:
             print("filtering %s results by start_date %s" % (sqs.count(), self.cleaned_data['start_date']))
             sqs = sqs.filter(when__gte=self.cleaned_data['start_date'])
-        
+
         # Filter end_date if requested
         if self.cleaned_data['end_date']:
             # add timestamp to end_date to include the whole end_date day,
@@ -41,10 +47,10 @@ class UrlSearchForm(SearchForm):
             print("filtering %s results by end_date %s" % (sqs.count(), self.cleaned_data['end_date']))
             sqs = sqs.filter(when__lte=end_time)
 
-        # Filter channel if relevant
-        if self.cleaned_data['channel']:
-            print("filtering %s results by channel %s" % (sqs.count(), self.cleaned_data['channel']))
-            sqs = sqs.filter(channel=self.cleaned_data['channel'])
+        # Order results by date
+        sqs = sqs.order_by('-when')
 
+        # Return results
+        print("returning %s results" % sqs.count())
         return sqs
 
