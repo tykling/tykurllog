@@ -47,7 +47,7 @@
                 {% if page_obj.has_previous or page_obj.has_next %}
                 
                 <div>
-                    <b>Showing results {{ page_obj.start_index }} to {{ page_obj.end_index }} on page {{ page.number }} of {{ page|length }} pages.</b>
+                    <p>Showing results {{ page_obj.start_index }} to {{ page_obj.end_index }} on page {{ page_obj.number }} of {{ page_obj|length }} pages.</p>
                     {% if page_obj.has_previous %}<a href="?q={{ query }}&amp;page={{ page_obj.previous_page_number }}">{% endif %}&laquo; Previous{% if page_obj.has_previous %}</a>{% endif %}
                     |
                     {% if page_obj.has_next %}<a href="?q={{ query }}&amp;page={{ page_obj.next_page_number }}">{% endif %}Next &raquo;{% if page_obj.has_next %}</a>{% endif %}

@@ -1,5 +1,7 @@
 from django import forms
+from django.utils import timezone
 from haystack.forms import SearchForm
+from haystack.query import SearchQuerySet
 from .models import IrcChannel, LoggedUrl
 import datetime
 
@@ -7,7 +9,7 @@ class UrlSearchForm(SearchForm):
     start_date = forms.DateField(input_formats=['%Y%m%d'], required=False, widget=forms.DateInput(attrs={'class': 'datepicker'}), help_text='Show urls logged no earlier than this date. Format: YYYYMMDD')
     end_date = forms.DateField(input_formats=['%Y%m%d'], required=False, widget=forms.DateInput(attrs={'class': 'datepicker'}), help_text='Show urls logged no later than this date. Format: YYYYMMDD')
     usermask = forms.CharField(required=False)
-    channel = forms.ModelChoiceField(required=False, queryset=IrcChannel.objects.all(), empty_label=None)
+    channel = forms.ModelChoiceField(required=False, queryset=IrcChannel.objects.all())
     
     def __init__(self, *args, **kwargs):
         super(UrlSearchForm, self).__init__(*args, **kwargs)
