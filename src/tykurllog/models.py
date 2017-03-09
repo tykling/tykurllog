@@ -45,7 +45,7 @@ class IrcChannel(models.Model):
 
 class LoggedUrl(models.Model):
     channel = models.ForeignKey('tykurllog.IrcChannel', related_name="urls")
-    url = models.TextField()
+    url = models.URLField(max_length=500)
     usermask = models.TextField(null=True, blank=True)
     when = models.DateTimeField(auto_now_add=True)
     repeats = models.PositiveIntegerField(default=0)
@@ -55,5 +55,6 @@ class LoggedUrl(models.Model):
 
     class Meta:
         ordering = ['-when']
+        unique_together=('channel', 'url')
 
 

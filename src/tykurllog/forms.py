@@ -16,13 +16,14 @@ class UrlSearchForm(SearchForm):
         self.fields['q'].help_text = 'Show only URLs containing this text'
 
     def search(self):
-        # First, store the SearchQuerySet received from other processing.
-        sqs = super(UrlSearchForm, self).search()
-
-        # Workaround to return all results when there is no searchword (instead of returning 0 results)
-        if not self.cleaned_data.get('q'):
-            # .all() doesn't work?! so .exclude() something very unlikely to actually filter away any results... stupid
-            sqs = SearchQuerySet().exclude(when=timezone.now())
+        if self.cleaned_data.get('q'):
+            # First, store the SearchQuerySet received from other processing.
+            sqs = super(UrlSearchForm, self).search()
+        else:
+            # Workaround to return all results when there is no searchword (instead of returning 0 results)
+            if not self.cleaned_data.get('q'):
+                # .all() doesn't work?! so .exclude() something very unlikely to actually filter away any results... stupid
+                sqs = SearchQuerySet().exclude(when=timezone.now())
 
         # Filter channel if requested
         if self.cleaned_data['channel']:
