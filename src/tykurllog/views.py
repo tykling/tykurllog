@@ -48,10 +48,16 @@ class UrlSearchView(FormMixin, ListView):
         else:
             print("form not valid")
             print(form.errors)
+            results = None
 
-        # return to the search page with the results
-        paginator = Paginator(results, 100) # Show 100 results per page
-        resultpage = paginator.get_page(request.GET.get('page'))
+        # get ready to return the result
+        if results:
+            # return to the search page with the results
+            paginator = Paginator(results, 100) # Show 100 results per page
+            resultpage = paginator.get_page(request.GET.get('page'))
+        else:
+            resultpage = None
+
         return render(
             request=self.request,
             template_name='search.html',
