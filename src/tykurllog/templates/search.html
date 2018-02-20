@@ -28,6 +28,7 @@
                                 <th>url</th>
                                 <th>usermask</th>
                                 <th>when</th>
+                                <th>where</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -36,6 +37,7 @@
                                     <td style="width: 60%; max-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="{{ result.url }}">{{ result.url }}</a></td>
                                     <td style="width: 20%; max-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ result.usermask|default:"N/A" }}</td>
                                     <td style="width: 20%;">{{ result.when }}</td>
+                                    <td style="width: 20%;">{{ result.channel }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
