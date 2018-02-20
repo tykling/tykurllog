@@ -21,7 +21,7 @@ class Command(BaseCommand):
             if ircnetwork.channels.filter(active=True).count==0:
                 self.stdout.write('IRC network %s has no active channels, skipping' % ircnetwork.name)
                 continue
-        
+
             server = random.choice(ircnetwork.servers.filter(active=True))
             self.stdout.write('Picked server %s:%s (%s) for IRC network %s...' % (server.hostorip, server.port, 'with TLS' if server.tls else 'no TLS', ircnetwork.name))
             config = {
@@ -59,7 +59,7 @@ class Plugin(object):
         ### check if this is a message to a channel
         if kwargs['target'] not in [channel.channel for channel in self.network.channels.filter(active=True)]:
             return
-        
+
         ### get the current time
         messagetime = timezone.now()
 
@@ -74,23 +74,23 @@ class Plugin(object):
                 except yurl.InvalidHost: ### do we need to catch other exceptions here?
                     ### invalid url, not saving
                     return
-                
+
                 ### check if this url has been spammed on this channel before
                 try:
                     dburl = LoggedUrl.objects.get(
                         channel=self.network.channels.get(channel=kwargs['target']),
                         url=url.as_string(),
                     )
-                    
+
                     ### this url has been spammed to this channel before, increase number of repeats
                     dburl.repeats += 1
                     dburl.save()
-                    
+
                     ### announce url repeat to channel if enabled
                     if self.network.channels.get(channel=kwargs['target']).announce_urlrepeats:
                         ### activate timezone for this channel before spamming message so it is output with the proper timezone
                         timezone.activate(self.network.channels.get(channel=kwargs['target']).timezone)
-                        
+
                         if dburl.repeats==1:
                             ### this is the first repeat
                             self.bot.privmsg(kwargs['target'], '%s, that url was first spammed in %s on %s by %s.' % (

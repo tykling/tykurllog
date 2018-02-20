@@ -31,26 +31,23 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for result in page_obj.object_list %}
-                                {% if result.object %}
-                                    <tr>
-                                        <td style="width: 60%; max-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="{{ result.object.url }}">{{ result.object.url }}</a></td>
-                                        <td style="width: 20%; max-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ result.object.usermask|default:"N/A" }}</td>
-                                        <td style="width: 20%;">{{ result.object.when }}</td>
-                                    </tr>
-                                {% endif %}
+                            {% for result in results %}
+                                <tr>
+                                    <td style="width: 60%; max-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><a href="{{ result.url }}">{{ result.url }}</a></td>
+                                    <td style="width: 20%; max-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ result.usermask|default:"N/A" }}</td>
+                                    <td style="width: 20%;">{{ result.when }}</td>
+                                </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
 
-                {% if page_obj.has_previous or page_obj.has_next %}
-                
+                {% if results.has_previous or results.has_next %}
                 <div>
-                    <p>Showing results {{ page_obj.start_index }} to {{ page_obj.end_index }} on page {{ page_obj.number }} of {{ page_obj|length }} pages.</p>
-                    {% if page_obj.has_previous %}<a href="?q={{ query }}&amp;page={{ page_obj.previous_page_number }}">{% endif %}&laquo; Previous{% if page_obj.has_previous %}</a>{% endif %}
+                    <p>Showing results {{ results.start_index }} to {{ results.end_index }} on page {{ results.number }} of {{ results|length }} pages.</p>
+                    {% if results.has_previous %}<a href="?q={{ query }}&amp;page={{ results.previous_page_number }}">{% endif %}&laquo; Previous{% if results.has_previous %}</a>{% endif %}
                     |
-                    {% if page_obj.has_next %}<a href="?q={{ query }}&amp;page={{ page_obj.next_page_number }}">{% endif %}Next &raquo;{% if page_obj.has_next %}</a>{% endif %}
+                    {% if results.has_next %}<a href="?q={{ query }}&amp;page={{ results.next_page_number }}">{% endif %}Next &raquo;{% if results.has_next %}</a>{% endif %}
                 </div>
                 {% endif %}
             </div>
@@ -63,3 +60,4 @@
         </script>
     </body>
 </html>
+

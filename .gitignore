@@ -4,6 +4,9 @@
 # env config
 environment_settings.py
 
+# virtualenv
+venv
+
 # database
 db.sqlite3
 

@@ -1,6 +1,6 @@
 from django.db import models
 from django import forms
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from timezone_field import TimeZoneField
 from django.conf import settings
 
@@ -19,7 +19,7 @@ class IrcNetwork(models.Model):
 
 
 class IrcServer(models.Model):
-    network = models.ForeignKey('tykurllog.IrcNetwork', related_name="servers")
+    network = models.ForeignKey('tykurllog.IrcNetwork', related_name="servers", on_delete=models.PROTECT)
     hostorip = models.TextField()
     port = models.PositiveIntegerField()
     tls = models.BooleanField(default=True)
@@ -31,7 +31,7 @@ class IrcServer(models.Model):
 
 
 class IrcChannel(models.Model):
-    network = models.ForeignKey('tykurllog.IrcNetwork', related_name="channels")
+    network = models.ForeignKey('tykurllog.IrcNetwork', related_name="channels", on_delete=models.PROTECT)
     channel = models.TextField()
     key = models.TextField(null=True, blank=True)
     log_nicknames = models.BooleanField(default=True)
@@ -44,7 +44,7 @@ class IrcChannel(models.Model):
 
 
 class LoggedUrl(models.Model):
-    channel = models.ForeignKey('tykurllog.IrcChannel', related_name="urls")
+    channel = models.ForeignKey('tykurllog.IrcChannel', related_name="urls", on_delete=models.PROTECT)
     url = models.URLField(max_length=500)
     usermask = models.TextField(null=True, blank=True)
     when = models.DateTimeField(auto_now_add=True)

@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
                 ('hostorip', models.TextField()),
                 ('port', models.PositiveIntegerField()),
                 ('password', models.TextField(null=True, blank=True)),
-                ('network', models.ForeignKey(to='tykurllog.IrcNetwork')),
+                ('network', models.ForeignKey(to='tykurllog.IrcNetwork', on_delete=models.PROTECT)),
             ],
         ),
         migrations.CreateModel(
@@ -47,12 +47,12 @@ class Migration(migrations.Migration):
                 ('url', models.TextField()),
                 ('nick', models.TextField(null=True, blank=True)),
                 ('when', models.DateTimeField(auto_now_add=True)),
-                ('channel', models.ForeignKey(to='tykurllog.IrcChannel')),
+                ('channel', models.ForeignKey(to='tykurllog.IrcChannel', on_delete=models.PROTECT)),
             ],
         ),
         migrations.AddField(
             model_name='ircchannel',
             name='network',
-            field=models.ForeignKey(to='tykurllog.IrcNetwork'),
+            field=models.ForeignKey(to='tykurllog.IrcNetwork', on_delete=models.PROTECT),
         ),
     ]
