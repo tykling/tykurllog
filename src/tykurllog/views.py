@@ -23,18 +23,18 @@ class UrlSearchView(FormMixin, ListView):
 
             # Filter channel if requested
             if form.cleaned_data['channel']:
-                print("filtering %s results by channel %s" % (sqs.count(), form.cleaned_data['channel']))
+                print("filtering %s results by channel %s" % (results.count(), form.cleaned_data['channel']))
                 results = results.filter(channel=form.cleaned_data['channel'])
 
             # Filter usermask if requested
             if form.cleaned_data['usermask']:
-                print("filtering %s results by usermask %s" % (sqs.count(), form.cleaned_data['usermask']))
+                print("filtering %s results by usermask %s" % (results.count(), form.cleaned_data['usermask']))
                 results = results.filter(usermask__icontains=form.cleaned_data['usermask'])
 
 
             # Filter start_date if requested
             if form.cleaned_data['start_date']:
-                print("filtering %s results by start_date %s" % (sqs.count(), form.cleaned_data['start_date']))
+                print("filtering %s results by start_date %s" % (results.count(), form.cleaned_data['start_date']))
                 results = results.filter(when__gte=form.cleaned_data['start_date'])
 
             # Filter end_date if requested
@@ -43,7 +43,7 @@ class UrlSearchView(FormMixin, ListView):
                 # because datefields are compared as 0am on the given date, 
                 # which is what we want for start_date but not for end_date)
                 end_time = datetime.datetime.combine(form.cleaned_data['end_date'], datetime.time.max)
-                print("filtering %s results by end_date %s" % (sqs.count(), form.cleaned_data['end_date']))
+                print("filtering %s results by end_date %s" % (results.count(), form.cleaned_data['end_date']))
                 results = results.filter(when__lte=end_time)
         else:
             results = None
