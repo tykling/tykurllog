@@ -46,8 +46,6 @@ class UrlSearchView(FormMixin, ListView):
                 print("filtering %s results by end_date %s" % (sqs.count(), form.cleaned_data['end_date']))
                 results = results.filter(when__lte=end_time)
         else:
-            print("form not valid")
-            print(form.errors)
             results = None
 
         # get ready to return the result
